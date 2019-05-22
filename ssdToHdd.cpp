@@ -139,7 +139,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 			totalSize+=stat_bf.st_size;
 		}
 	}
-	if(toUpdateFile->size()!=0){
+	if(toUpdateFile->empty()==false){
 		sort(toUpdateFile->begin(),toUpdateFile->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateFile->begin();iter!=toUpdateFile->end();iter++){
 			s2hData.accessTime[s2hData.end]=*iter;
@@ -149,7 +149,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 		}
 	}
 
-	if(toUpdateSubdir->size()!=0){
+	if(toUpdateSubdir->empty()==false){
 		sort(toUpdateSubdir->begin(),toUpdateSubdir->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateSubdir->begin();iter!=toUpdateSubdir->end();iter++){
 			s2hData.accessTimeSubdir[s2hData.endSubdir]=*iter;
@@ -205,9 +205,17 @@ int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 }
 
 int move2hdd(const char *path){
-	string relativePath=path;
-	relativePath.substr(relativePath.find(absolPathSSD));
-
+	string relativePath,dest;
+	relativePath=path;
+	relativePath=relativePath.substr(relativePath.find(absolPathSSD)+strlen(absolPathSSD));
+	dest=absolPathHDD;
+	dest=dest+"/"+relativePath;
+	string mkdir="mkdir -p ";
+	mkdir=mkdir+dest;
+	system(mkdir.c_str());
+	string cp="cp -r ";
+	cp=cp+path+" "+dest;
+	system(cp.c_str());
 	return 0;	
 }//to do...
 
