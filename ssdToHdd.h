@@ -23,7 +23,7 @@ struct s2hData{
 };
 
 vector<int> * printList(vector<pair<double,string>> const* list,int errorCode);//0 normal
-double calWeight(string path);
+double calWeight(string path,time_t reference,vector<time_t> const &diff);
 
 int getInfo(string path,struct stat*stat,struct s2hData*s2hData);
 int getInfo(const char* path,struct stat*stat,struct s2hData*s2hData);

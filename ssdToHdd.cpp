@@ -20,6 +20,8 @@ static char absolPathHDD[4096];
 /*			What To Do
  *Error find//find errno
  *demonize main
+ *time_t standard deviation.
+ *modi ssdtohdd
  */
 
 
@@ -32,10 +34,20 @@ void s2hDataInit(struct s2hData *s2hData);
 int compareTimet(time_t time1,time_t time2);
 int saveInfo(string path,struct s2hData*s2hData);
 
+
+static double mean;
+static int totalNum;
+static double deviation;
+static time_t cur_time;
+
+int getTotal(const char *path,const struct *sb,int typeflag);
+int getDevi(const char *path,const struct *sb,int typeflag);
+
 int main(int argc,char *argv[]){
 	(void)argc;
 	double limitSizeGB;
 	off_t limitSize;
+	pid_t pid;
 	if(chdir(argv[1])){
 		printf("?\n");
 		return 1;
@@ -44,8 +56,17 @@ int main(int argc,char *argv[]){
 	realpath(argv[2],absolPathHDD);
 	sscanf(argv[3],"%lf",&limitSizeGB);
 	limitSize=limitSizeGB*1024*1024*1024;
+	pid=fork();
+	if(pid)
+		exit(0);
+	signal(SIGHUP,SIG_IGN);
+	close(0);
+	close(1);
+	close(2);
+	chdir("/");
+	setsid();
 	startDaemon(limitSize);
-	return 0;//only damonize left
+	return 0;//done
 }
 
 void startDaemon(off_t limitSize){
@@ -59,6 +80,12 @@ void startDaemon(off_t limitSize){
 		exit(1);
 	if((statbuf.st_mode&S_IFDIR)==0)
 		exit(2);
+	ftw(absolPathSSD,getTotal,100);
+	if(totalNum)
+		mean/=totalNum;
+	ftw(absolPathSSD,getDevi,100);
+	if(totalNum)
+		deviation/=totalNum;
 	chdir(absolPathSSD);
 	while(1){
 		size=0;
@@ -233,3 +260,13 @@ int compareTimet(time_t time1,time_t time2){
 		return -1;
 	return 0;
 }//have to varify
+
+int getTotal(const char *path,const struct *sb,int typeflag){
+	mean+=sb->st_size;
+	totalNum++;
+}
+
+	
+int getDevi(const char *path,const struct *sb,int typeflag){
+	deviation+=(mean-sb->st_size)*(mean-sb->st_size);
+}
