@@ -52,7 +52,7 @@ double get_file_score(const int begin, const int end, const time_t accessTime[NU
 	int length = sizeof(accessTime) / sizeof(time_t);
 	for(vector<time_t>::const_iterator iter = diff.begin(); iter!=diff.end(); iter++) {
 		for(int i=0; i<length; i++) {
-			if(*iter<accessTime[i]) {
+			if(*iter < reference - accessTime[i]) {
 				score++;
 			}
 		}
@@ -60,7 +60,7 @@ double get_file_score(const int begin, const int end, const time_t accessTime[NU
 
 	score = score / length;
 
-	return score;
+	return 16 * NUMBEROFSAVE - score;
 }
 
 static double get_subdir_score(const int begin, const int end, const time_t accessTime[NUMBEROFSAVE], const time_t reference, vector<time_t> const &diff) {
@@ -68,7 +68,7 @@ static double get_subdir_score(const int begin, const int end, const time_t acce
 	int length = sizeof(accessTime) / sizeof(time_t);
 	for(vector<time_t>::const_iterator iter = diff.begin(); iter!=diff.end(); iter++) {
 		for(int i=0; i<length; i++) {
-			if(*iter<accessTime[i]) {
+			if(*iter < reference - accessTime[i]) {
 				score++;
 			}
 		}
@@ -76,5 +76,5 @@ static double get_subdir_score(const int begin, const int end, const time_t acce
 
 	score = score / length;
 
-	return score;
+	return 16 * NUMBEROFSAVE - score;
 }
