@@ -3,35 +3,14 @@
 #include<sys/stat.h>
 #include<string> 
 #include<math.h>
+#include"ssdToHdd.h"
 
-#define TIMELOGNAME ".s2htimelog"
-#define NUMBEROFSAVE (30)
 
 using namespace std;
-
-struct s2hData{
-	int begin,end; 
-	time_t lastAccessTime;
-	time_t accessTime[NUMBEROFSAVE];
-	int beginSubdir,endSubdir;
-	time_t lastAccessTimeSubdir;
-	time_t accessTimeSubdir[NUMBEROFSAVE];
-	off_t sizeOfDir;
-};
-
-int getInfo(string path, struct stat *stat, struct s2hData *s2hData);
-int getInfo(const char *path, struct stat *stat, struct s2hData *s2hData);
 
 static double get_file_score(const int begin, const int end, const time_t accessTime[NUMBEROFSAVE], const time_t reference, vector<time_t> const &diff);
 static double get_subdir_score(const int begin, const int end, const time_t accessTime[NUMBEROFSAVE], const time_t reference, vector<time_t> const &diff);
 static double get_size_score(const off_t sizeOfDir);//?????
-
-double calWeight(string path, time_t reference, vector<time_t> const &diff);
-
-int main() {
-
-    return 0;
-}
 
 double calWeight(string path, time_t reference, vector<time_t> const &diff) {
     struct stat stat;
