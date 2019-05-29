@@ -14,23 +14,6 @@ static void cancel_event(GtkWidget *widget, gpointer data);
 
 static void init_list();
 
-int main(int argc, char* argv[]) {
-	double a[5] = {1,2,3,4,5};
-	string x[5] = {"/path/path", "hi", "hello", "why", "mundf"};
-	vector<pair<double,string>> list;
-	vector<int> *b = new vector<int>;
-	for(int i=0; i<5; i++) {
-		list.push_back(make_pair(a[i], x[i]));
-	}
-	printList(argc, argv, &list, RECOMMEND);
-	printf("<result>\n");
-	//result == -1 => cancel
-	for(int i=0; i<result->size(); i++) {
-		printf("num %d : %d\n", i, result->at(i));
-	}
-	return 0;
-}
-
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
 
 	if(list->size()>10) {
