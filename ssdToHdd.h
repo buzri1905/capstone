@@ -9,6 +9,7 @@
 
 #define TIMELOGNAME ".s2htimelog"
 #define NUMBEROFSAVE (30)
+#define SLEEPTIME (60)
 
 using namespace std;
 

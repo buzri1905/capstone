@@ -1,5 +1,6 @@
 #include<cstdio>
 #include<sys/types.h>
+#include<signal.h>
 #include<sys/stat.h>
 #include<unistd.h>
 #include<cerrno>
@@ -9,13 +10,20 @@
 #include<string>
 #include<utility>
 #include<dirent.h>
+#include<ftw.h>
 #include"ssdToHdd.h"
+#include<pthread.h>
 
 using namespace std;
 
 static vector<pair<double,string> > *s2hlist;
 static char absolPathSSD[4096];
 static char absolPathHDD[4096];
+static vector<double> timeStatic;
+static double sum;
+static vector<time_t> timeRefer;
+static time_t curTime;
+int getStaticTime(const char *path,const struct stat *sb,int typeflag);
 
 /*			What To Do
  *Error find//find errno
@@ -33,15 +41,7 @@ int move2hdd(const char *path);
 void s2hDataInit(struct s2hData *s2hData);
 int compareTimet(time_t time1,time_t time2);
 int saveInfo(string path,struct s2hData*s2hData);
-
-
-static double mean;
-static int totalNum;
-static double deviation;
-static time_t cur_time;
-
-int getTotal(const char *path,const struct *sb,int typeflag);
-int getDevi(const char *path,const struct *sb,int typeflag);
+void getStatic(const char *path);
 
 int main(int argc,char *argv[]){
 	(void)argc;
@@ -80,12 +80,6 @@ void startDaemon(off_t limitSize){
 		exit(1);
 	if((statbuf.st_mode&S_IFDIR)==0)
 		exit(2);
-	ftw(absolPathSSD,getTotal,100);
-	if(totalNum)
-		mean/=totalNum;
-	ftw(absolPathSSD,getDevi,100);
-	if(totalNum)
-		deviation/=totalNum;
 	chdir(absolPathSSD);
 	while(1){
 		size=0;
@@ -98,6 +92,8 @@ void startDaemon(off_t limitSize){
 		if((statbuf.st_mode&S_IFDIR)==0)
 			exit(2);
 		s2hlist->clear();
+		getStatic("./");
+		time(&curTime);
 		updateDir("./",&statbuf,&size,0);
 		rate=size/(double)limitSize*100;
 		if(rate>=90){
@@ -126,6 +122,7 @@ void startDaemon(off_t limitSize){
 				//?delete selected;
 			}
 		}
+		sleep(SLEEPTIME);
 	}//done
 }
 int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
@@ -191,7 +188,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 	string pathString=absolPathSSD;
 	pathString+="/";
 	pathString+=path;
-	s2hlist->push_back(make_pair(calWeight(pathString),pathString));
+	s2hlist->push_back(make_pair(calWeight(pathString,curTime,timeRefer),pathString));
 	delete toUpdateFile;
 	delete toUpdateSubdir;
 
@@ -261,12 +258,53 @@ int compareTimet(time_t time1,time_t time2){
 	return 0;
 }//have to varify
 
-int getTotal(const char *path,const struct *sb,int typeflag){
-	mean+=sb->st_size;
-	totalNum++;
+void getStatic(const char *path){
+	int numOfFile;
+	int numOf10Percent;
+	double first10aver=0,last10aver=0;
+	double first10Vari=0,last10Vari=0;
+	timeStatic.clear();
+	timeRefer.clear();
+	sum=0;
+	time(&curTime);
+	ftw(path,getStaticTime,100);
+	sort(timeStatic.begin(),timeStatic.end());
+	numOfFile=timeStatic.size();
+	numOf10Percent=numOfFile/10+3;
+	vector<double>::iterator iterFirst=timeStatic.begin();
+	vector<double>::reverse_iterator iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf10Percent;i++){
+		first10aver+=*iterFirst;
+		last10aver+=*iterLast;
+		iterFirst++;
+		iterLast++;
+	}
+	first10aver/=numOf10Percent;
+	last10aver/=numOf10Percent;
+
+	iterFirst=timeStatic.begin();
+	iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf10Percent;i++){
+		first10Vari+=(*iterFirst-first10aver)*(*iterFirst-first10aver);
+		last10Vari+=(*iterLast-last10aver)*(*iterLast-last10aver);
+		iterFirst++;
+		iterLast++;
+	}
+	first10Vari/=numOf10Percent-1;
+	last10Vari/=numOf10Percent-1;
+	for(int i=0;i<8;i++){
+		time_t convert;
+		convert=first10aver+(i-3)*first10Vari/8;
+		timeRefer.push_back(convert);
+		convert=last10aver+(i-3)*last10Vari/8;
+		timeRefer.push_back(convert);
+	}
+	return;
 }
 
-	
-int getDevi(const char *path,const struct *sb,int typeflag){
-	deviation+=(mean-sb->st_size)*(mean-sb->st_size);
+int getStaticTime(const char *path,const struct stat *sb,int typeflag){
+	(void)path;
+	(void)typeflag;
+	timeStatic.push_back(difftime(curTime,sb->st_atime));
+	return 0;
 }
