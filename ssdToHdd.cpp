@@ -36,11 +36,11 @@ int getStaticTime(const char *path,const struct stat *sb,int typeflag);
 
 void updateS2H(const char * path);
 int updateDir(const char * path,const struct stat *sb,off_t *size,int depth);
-void startDaemon(off_t limitSize);
+void startDaemon(int argc,char*argv[],off_t limitSize);
 int move2hdd(const char *path);
 void s2hDataInit(struct s2hData *s2hData);
 int compareTimet(time_t time1,time_t time2);
-int saveInfo(string path,struct s2hData*s2hData);
+int saveInfo(const char* path,struct s2hData*s2hData);
 void getStatic(const char *path);
 
 int main(int argc,char *argv[]){
@@ -65,11 +65,11 @@ int main(int argc,char *argv[]){
 	close(2);
 	chdir("/");
 	setsid();
-	startDaemon(limitSize);
+	startDaemon(argc,argv,limitSize);
 	return 0;//done
 }
 
-void startDaemon(off_t limitSize){
+void startDaemon(int argc,char*argv[],off_t limitSize){
 	int errcode,prevErr=0;
 	struct stat statbuf;
 	double rate;
@@ -99,7 +99,7 @@ void startDaemon(off_t limitSize){
 		if(rate>=90){
 			while(1){
 				errcode=0;
-				selected=printList(s2hlist,prevErr);
+				selected=printList(argc,argv,s2hlist,prevErr);
 				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
 				prevErr=errcode;
@@ -196,7 +196,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 }
 
 
-int saveInfo(char* path,struct s2hData*s2hData){
+int saveInfo(const char* path,struct s2hData*s2hData){
 	FILE*fp;
 	string pathString=absolPathSSD;
 	pathString+="/";
