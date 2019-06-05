@@ -149,7 +149,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 #ifdef DEBUGMODE
 	printf("in updateDir path is %s\n",path);
 #endif
-	dir=opendir(".");
+	dir=opendir(path);
 	if(dir==NULL)
 		return FAILEDTOOPEN;
 	if(access(TIMELOGNAME,F_OK)!=-1){
