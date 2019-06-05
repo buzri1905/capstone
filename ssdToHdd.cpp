@@ -59,7 +59,7 @@ int main(int argc,char *argv[]){
 	realpath(argv[2],absolPathHDD);
 	sscanf(argv[3],"%lf",&limitSizeGB);
 	limitSize=limitSizeGB*1024*1024*1024;
-#ifndef DEBUGMODE
+/*
 	pid=fork();
 	if(pid)
 		exit(0);
@@ -69,7 +69,7 @@ int main(int argc,char *argv[]){
 	close(2);
 	chdir("/");
 	setsid();
-#endif
+*/
 	startDaemon(argc,argv,limitSize);
 	return 0;//done
 }
@@ -103,15 +103,13 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		s2hlist->clear();
 		getStatic("./");
 		time(&curTime);
+		chdir(absolPathSSD);
 		updateDir(home,&statbuf,&size,0);
 		rate=size/(double)limitSize*100;
 #ifdef DEBUGMODE
 		printf("rate is %lf\nsize is %ld\n",rate,size);
 #endif
 		if(rate>=90){
-#ifdef DEBUGMODE
-			printf("why here?\n");
-#endif
 			while(1){
 				errcode=0;
 				//selected=printList(argc,argv,s2hlist,prevErr);
@@ -149,9 +147,6 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	(void)sb;
 	*size=0;
 	vector<time_t> *toUpdateFile,*toUpdateSubdir;
-#ifdef DEBUGMODE
-	printf("in updateDir path is %s\n",path.c_str());
-#endif
 	dir=opendir(path.c_str());
 	if(dir==NULL)
 		return FAILEDTOOPEN;
@@ -181,7 +176,9 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			chdir(pathString.c_str());
 			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1);
 			chdir(path.c_str());
+#ifdef DEBUGMODE
 			printf("subdir of %s size is %ld\n",pathString.c_str(),sizeOfSubDir);
+#endif
 
 			totalSize+=sizeOfSubDir;
 #ifdef DEBUGMODE
@@ -196,7 +193,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 				toUpdateFile->push_back(stat_bf.st_atime);
 			totalSize+=stat_bf.st_size;
 #ifdef DEBUGMODE
-			printf("update file path %s add %ld\n",dirEntry,stat_bf.st_size);
+			printf("update file path %s add %ld\n",dirEntry->d_name,stat_bf.st_size);
 #endif
 		}
 	}
