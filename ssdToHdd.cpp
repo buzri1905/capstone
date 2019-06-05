@@ -163,9 +163,11 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			continue;
 		if(strcmp(dirEntry->d_name,"..")==0)
 			continue;
-		if(stat(dirEntry->d_name,&stat_bf))
+		if(stat(dirEntry->d_name,&stat_bf)){
 			perror("something wrong\n");
 			//printf("Something wrong in updateDir path is %s\n",dirEntry->d_name);
+			printf("current dir is %s file is %s\n",path.c_str(),dirEntry->d_name);
+		}
 		if(S_ISDIR(stat_bf.st_mode)){
 			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTimeSubdir))
 				toUpdateSubdir->push_back(stat_bf.st_atime);
