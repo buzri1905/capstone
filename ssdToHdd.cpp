@@ -257,7 +257,8 @@ int getInfo(string path,struct stat*stat_bf,struct s2hData*s2hData){
 int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 	FILE*fp;
 	string pathString=path;
-	stat(pathString.c_str(),stat_bf);
+	if(stat(pathString.c_str(),stat_bf))
+		printf("Something wrong in getInfo path is %s\n",path);
 
 	pathString+="/";
 	pathString+=TIMELOGNAME;
