@@ -37,11 +37,12 @@ int getStaticTime(const char *path,const struct stat *sb,int typeflag);
 
 
 void updateS2H(const char * path);
-int updateDir(const char * path,const struct stat *sb,off_t *size,int depth);
+int updateDir(string path,const struct stat *sb,off_t *size,int depth);
 void startDaemon(int argc,char*argv[],off_t limitSize);
 int move2hdd(const char *path);
 void s2hDataInit(struct s2hData *s2hData);
 int compareTimet(time_t time1,time_t time2);
+int saveInfo(string path,struct s2hData*s2hData);
 int saveInfo(const char* path,struct s2hData*s2hData);
 void getStatic(const char *path);
 
@@ -78,6 +79,7 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 	struct stat statbuf;
 	double rate;
 	off_t size;
+	string home=".";
 	s2hlist=new vector<pair<double,string>>;
 	vector<int>*selected;
 	if(stat(absolPathSSD,&statbuf))
@@ -101,7 +103,7 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		s2hlist->clear();
 		getStatic("./");
 		time(&curTime);
-		updateDir(".",&statbuf,&size,0);
+		updateDir(home,&statbuf,&size,0);
 		rate=size/(double)limitSize*100;
 #ifdef DEBUGMODE
 		printf("rate is %lf\nsize is %ld\n",rate,size);
@@ -138,7 +140,7 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		sleep(SLEEPTIME);
 	}//done
 }
-int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
+int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	off_t totalSize=0,sizeOfSubDir;
 	DIR *dir;
 	struct dirent *dirEntry;
@@ -147,9 +149,9 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 	(void)sb;
 	vector<time_t> *toUpdateFile,*toUpdateSubdir;
 #ifdef DEBUGMODE
-	printf("in updateDir path is %s\n",path);
+	printf("in updateDir path is %s\n",path.c_str());
 #endif
-	dir=opendir(path);
+	dir=opendir(path.c_str());
 	if(dir==NULL)
 		return FAILEDTOOPEN;
 	if(access(TIMELOGNAME,F_OK)!=-1){
@@ -173,7 +175,11 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 			pathString=path;
 			pathString+="/";
 			pathString+=dirEntry->d_name;
+
+			chdir(pathString.c_str());
 			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1);
+			chdir(path.c_str());
+
 			totalSize+=sizeOfSubDir;
 #ifdef DEBUGMODE
 			printf("in update dir pathString is %s\n",pathString.c_str());
@@ -212,7 +218,7 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 	}
 	*size=s2hData.sizeOfDir=totalSize;
 #ifdef DEBUGMODE
-	printf("%s's size is %ld\n",path,totalSize);
+	printf("%s's size is %ld\n",path.c_str(),totalSize);
 #endif
 	saveInfo(path,&s2hData);
 
@@ -227,6 +233,9 @@ int updateDir(const char * path,const struct stat *sb,off_t *size,int depth){
 }
 
 
+int saveInfo(string path,struct s2hData*s2hData){
+	return saveInfo(path.c_str(),s2hData);
+}
 int saveInfo(const char* path,struct s2hData*s2hData){
 	FILE*fp;
 	string pathString=absolPathSSD;
