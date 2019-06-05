@@ -147,6 +147,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	struct s2hData s2hData;
 	struct stat stat_bf;
 	(void)sb;
+	*size=0;
 	vector<time_t> *toUpdateFile,*toUpdateSubdir;
 #ifdef DEBUGMODE
 	printf("in updateDir path is %s\n",path.c_str());
