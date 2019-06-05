@@ -179,6 +179,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			chdir(pathString.c_str());
 			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1);
 			chdir(path.c_str());
+			printf("subdir of %s size is %ld\n",pathString.c_str(),sizeOfSubDir);
 
 			totalSize+=sizeOfSubDir;
 #ifdef DEBUGMODE
