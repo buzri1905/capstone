@@ -105,7 +105,7 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		chdir(absolPathSSD);
 		updateDir(home,&statbuf,&size,0);
 		rate=size/(double)limitSize*100;
-		if(rate>=90){
+		if(rate>=0){//force
 			while(1){
 				errcode=0;
 				selected=printList(argc,argv,s2hlist,prevErr);
