@@ -125,7 +125,7 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, long int 
 }
 
 
-static void ok_button_press_event(GtkWidget *widget, gpointer data) {
+static void ok_button_press_event(gpointer data) {
 	for(int i=0; i<LIST_NUM; i++) {
 		if(list[i]==1)
 			result->push_back(i);
