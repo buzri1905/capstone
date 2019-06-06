@@ -52,7 +52,7 @@ int main(int argc,char *argv[]){
 	(void)argc;
 	double limitSizeGB;
 	off_t limitSize;
-	pid_t pid;
+	//pid_t pid;
 	if(chdir(argv[1])){
 		printf("?\n");
 		return 1;
