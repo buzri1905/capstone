@@ -203,7 +203,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	string pathString=absolPathSSD;
 	pathString+="/";
 	pathString+=path;
-	printf("Pushback dir\n");
+	//printf("Pushback dir\n");
 	s2hlist->push_back(make_pair(calWeight(pathString,curTime,timeRefer),pathString));
 	delete toUpdateFile;
 	delete toUpdateSubdir;
@@ -279,8 +279,12 @@ int compareTimet(time_t time1,time_t time2){
 void getStatic(const char *path){
 	int numOfFile;
 	int numOf10Percent;
+	int numOf33Percent;
+	int numOf50Percent;
 	double first10aver=0,last10aver=0;
 	double first10Vari=0,last10Vari=0;
+	double last33aver=0,last33aver=0;
+	double last50Vari=0,last50Vari=0;
 	timeStatic.clear();
 	timeRefer.clear();
 	sum=0;
@@ -288,7 +292,9 @@ void getStatic(const char *path){
 	ftw(path,getStaticTime,100);
 	sort(timeStatic.begin(),timeStatic.end());
 	numOfFile=timeStatic.size();
-	numOf10Percent=numOfFile/10+3;
+	numOf10Percent=numOfFile/10+1;
+	numOf33Percent=numOfFile/3+1;
+	numOf50Percent=numOfFile/2+1;
 	vector<double>::iterator iterFirst=timeStatic.begin();
 	vector<double>::reverse_iterator iterLast=timeStatic.rbegin();
 	for(int i=0;i<numOf10Percent;i++){
@@ -297,8 +303,22 @@ void getStatic(const char *path){
 		iterFirst++;
 		iterLast++;
 	}
+	iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf33Percent;i++){
+		last33aver+=*iterLast;
+		iterLast++;
+	}
+	iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf50Percent;i++){
+		last50aver+=*iterLast;
+		iterLast++;
+	}
+
 	first10aver/=numOf10Percent;
 	last10aver/=numOf10Percent;
+
+	last33aver/=numOf33Percent;
+	last50aver/=numOf50Percent;
 
 	iterFirst=timeStatic.begin();
 	iterLast=timeStatic.rbegin();
@@ -308,13 +328,32 @@ void getStatic(const char *path){
 		iterFirst++;
 		iterLast++;
 	}
-	first10Vari/=numOf10Percent-1;
-	last10Vari/=numOf10Percent-1;
-	for(int i=0;i<8;i++){
+	first10Vari/=numOf10Percent;
+	last10Vari/=numOf10Percent;
+	
+	iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf33Percent;i++){
+		last33vari+=(*iterLast-last33aver)*(*iterLast-last33aver);
+		iterLast++;
+	}
+	iterLast=timeStatic.rbegin();
+	for(int i=0;i<numOf50Percent;i++){
+		last50vari+=(*iterLast-last50aver)*(*iterLast-last50aver);
+		iterLast++;
+	}
+	
+	last33vari/=numOf33Percent;
+	last50vari/=numOf50Percent;
+
+	for(int i=0;i<4;i++){
 		time_t convert;
 		convert=first10aver+(i-3)*first10Vari/8;
 		timeRefer.push_back(convert);
 		convert=last10aver+(i-3)*last10Vari/8;
+		timeRefer.push_back(convert);
+		convert=last33aver+(i-3)*last33vari/8;
+		timeRefer.push_back(convert);
+		convert=last50aver+(i-3)*last50vari/8;
 		timeRefer.push_back(convert);
 	}
 	return;
