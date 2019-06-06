@@ -6,7 +6,7 @@
 #include <stdlib.h>
 //#include "ssdToHdd.h"
 
-#define RECOMMEND 1
+#define RECOMMEND 0
 #define WINDOW_HEIGHT 500
 #define WINDOW_WIDTH 700
 #define WIDGET_HEIGHT 40
