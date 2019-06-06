@@ -6,8 +6,6 @@ static int list[LIST_NUM] = {0, };
 
 static void ok_button_press_event(GtkWidget *widget, gpointer data);
 
-static void callback(GtkWidget *widget, gpointer text);
-
 static void checkbutton_callback(GtkWidget *widget, long int num);
 
 static void cancel_event(GtkWidget *widget, gpointer data);
@@ -15,7 +13,7 @@ static void cancel_event(GtkWidget *widget, gpointer data);
 static void init_list();
 
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
-
+	init_list();
 	if(list->size()>10) {
 		result->push_back(-1);
 		return result;
@@ -134,10 +132,6 @@ static void ok_button_press_event(GtkWidget *widget, gpointer data) {
 	}
 
 	gtk_main_quit();
-}
-
-static void callback(GtkWidget *widget, gpointer text) {
-	g_print("hello~~~ %s was pressed\n", (char *) text);
 }
 
 static void checkbutton_callback(GtkWidget *widget, long int num) {
