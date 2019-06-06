@@ -164,14 +164,9 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		if(S_ISDIR(stat_bf.st_mode)){
 			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTimeSubdir))
 				toUpdateSubdir->push_back(stat_bf.st_atime);
-			string pathString;
-			pathString+=path;
-			pathString+="/";
-			pathString+=dirEntry->d_name;
+			string pathString=path+"/"+dirEntry->d_name;
 
-			chdir(pathString.c_str());
 			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1);
-			chdir("..");
 
 			totalSize+=sizeOfSubDir;
 		}
