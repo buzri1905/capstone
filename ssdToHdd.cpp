@@ -283,8 +283,8 @@ void getStatic(const char *path){
 	int numOf50Percent;
 	double first10aver=0,last10aver=0;
 	double first10Vari=0,last10Vari=0;
-	double last33aver=0,last33aver=0;
-	double last50Vari=0,last50Vari=0;
+	double last33aver=0,last50aver=0;
+	double last33Vari=0,last50Vari=0;
 	timeStatic.clear();
 	timeRefer.clear();
 	sum=0;
@@ -333,17 +333,17 @@ void getStatic(const char *path){
 	
 	iterLast=timeStatic.rbegin();
 	for(int i=0;i<numOf33Percent;i++){
-		last33vari+=(*iterLast-last33aver)*(*iterLast-last33aver);
+		last33Vari+=(*iterLast-last33aver)*(*iterLast-last33aver);
 		iterLast++;
 	}
 	iterLast=timeStatic.rbegin();
 	for(int i=0;i<numOf50Percent;i++){
-		last50vari+=(*iterLast-last50aver)*(*iterLast-last50aver);
+		last50Vari+=(*iterLast-last50aver)*(*iterLast-last50aver);
 		iterLast++;
 	}
 	
-	last33vari/=numOf33Percent;
-	last50vari/=numOf50Percent;
+	last33Vari/=numOf33Percent;
+	last50Vari/=numOf50Percent;
 
 	for(int i=0;i<4;i++){
 		time_t convert;
@@ -351,9 +351,9 @@ void getStatic(const char *path){
 		timeRefer.push_back(convert);
 		convert=last10aver+(i-3)*last10Vari/8;
 		timeRefer.push_back(convert);
-		convert=last33aver+(i-3)*last33vari/8;
+		convert=last33aver+(i-3)*last33Vari/8;
 		timeRefer.push_back(convert);
-		convert=last50aver+(i-3)*last50vari/8;
+		convert=last50aver+(i-3)*last50Vari/8;
 		timeRefer.push_back(convert);
 	}
 	return;
