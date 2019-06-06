@@ -283,8 +283,8 @@ void getStatic(const char *path){
 	int numOf50Percent;
 	double first10aver=0,last10aver=0;
 	double first10Vari=0,last10Vari=0;
-	double last33aver=0,last33aver=0;
-	double last50Vari=0,last50Vari=0;
+	double last33aver=0,last50aver=0;
+	double last33Vari=0,last50Vari=0;
 	timeStatic.clear();
 	timeRefer.clear();
 	sum=0;
