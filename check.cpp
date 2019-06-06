@@ -4,7 +4,7 @@ static vector<int> *result = new vector<int>;
 
 static int list[LIST_NUM] = {0, };
 
-static void ok_button_press_event(GtkWidget *widget, gpointer data);
+static void ok_button_press_event(gpointer data);
 
 static void checkbutton_callback(GtkWidget *widget, long int num);
 
