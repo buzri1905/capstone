@@ -2,7 +2,7 @@
 
 static vector<int> *result = new vector<int>;
 
-static int list[LIST_NUM] = {0, };
+static int check_list[LIST_NUM] = {0, };
 
 static void ok_button_press_event(GtkWidget *widget, gpointer data);
 
@@ -14,7 +14,7 @@ static void init_list();
 
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
 	init_list();
-	if(list->size()>10) {
+	if(list->size()>LIST_NUM) {
 		result->push_back(-1);
 		return result;
 	}
@@ -129,7 +129,7 @@ static void ok_button_press_event(GtkWidget *widget, gpointer data) {
 	(void)widget;
 	(void)data;
 	for(int i=0; i<LIST_NUM; i++) {
-		if(list[i]==1)
+		if(check_list[i]==1)
 			result->push_back(i);
 	}
 
@@ -139,10 +139,10 @@ static void ok_button_press_event(GtkWidget *widget, gpointer data) {
 static void checkbutton_callback(GtkWidget *widget, long int num) {
 	if(GTK_TOGGLE_BUTTON(widget)->active) {
 		g_print("%ld : activated\n", num);
-		list[num] = 1;
+		check_list[num] = 1;
 	} else {
 		g_print("%ld : not activated\n", num);
-		list[num] = 0;
+		check_list[num] = 0;
 	}
 	printf("\n");
 }
@@ -158,6 +158,6 @@ static void cancel_event(GtkWidget *widget, gpointer data) {
 static void init_list() {
 	result->clear();
 	for(int i=0; i<LIST_NUM; i++) {
-		list[i] = 0;
+		check_list[i] = 0;
 	}
 }
