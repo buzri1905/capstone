@@ -14,8 +14,11 @@ static void init_list();
 
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
 	init_list();
+
+	result->clear();
+
 	if(list->size()>LIST_NUM) {
-		result->push_back(-1);
+		//result->push_back(-1);
 		return result;
 	}
 
@@ -38,7 +41,7 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	switch (errorCode) {
 		case RECOMMEND:
 		{
-			label_information = gtk_label_new("The disk is full. It is recommended to move the folder to the SSD. Would you like to move if?");
+			label_information = gtk_label_new("The disk is full. It is recommended to move the folder to the SSD. Would you like to move it?");
 			gtk_widget_show(label_information);
 
 			vbox = gtk_vbox_new(FALSE, 0);
@@ -66,7 +69,7 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 			button_ok = gtk_button_new_with_label("ok");
 
 			g_signal_connect(button_ok, "clicked", G_CALLBACK(ok_button_press_event), NULL);
-			g_signal_connect(GTK_OBJECT(button_cancel), "clicked", G_CALLBACK(cancel_event), (gpointer) "cancel");
+			g_signal_connect(GTK_OBJECT(button_cancel), "clicked", G_CALLBACK(cancel_event), NULL);
 
 			gtk_container_add(GTK_CONTAINER(hbox_button), button_cancel);
 			gtk_container_add(GTK_CONTAINER(hbox_button), button_ok);
@@ -84,10 +87,17 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 		default:
 		{
 			printf("something wrong...\n");
-			result->push_back(-1);
+			//result->push_back(-1);
 			break;
 		}
 	}
+
+	gtk_widget_hide(window);
+	for(vector<int>::iterator iter=result->begin(); iter!=result->end(); iter++) {
+		printf("checked : %d\n", (*iter));
+	}
+
+	printf("end gui\n");
 
 	return result;
 }
@@ -150,8 +160,7 @@ static void checkbutton_callback(GtkWidget *widget, long int num) {
 static void cancel_event(GtkWidget *widget, gpointer data) {
 	(void)widget;
 	(void)data;
-	result->push_back(-1);
-
+	//result->push_back(-1);
 	gtk_main_quit();
 }
 
