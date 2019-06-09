@@ -254,7 +254,9 @@ int move2hdd(const char *path){
 	relativePath.erase(0,strlen(absolPathSSD));
 	string dest=absolPathHDD;
 	dest+=relativePath;
-	printf("%s\n",dest.c_str());
+	string commandMV="mv -r ";
+	commandMV+=path+" "+dest;
+	printf("%s\n",commandMV.c_str());
 	return 0;	
 }//to do...
 
