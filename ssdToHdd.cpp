@@ -111,10 +111,8 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 				errcode=0;
 				printf("print call\n");
 				selected=printList(argc,argv,s2hlist,prevErr);
-				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++){
+				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
-					printf("%s\n",s2hlist->at(*iter).second.c_str());
-				}
 				prevErr=errcode;
 				if(!errcode)
 					break;
@@ -251,17 +249,11 @@ int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 }
 
 int move2hdd(const char *path){
-	string relativePath,dest;
-	relativePath=path;
-	relativePath=relativePath.substr(relativePath.find(absolPathSSD)+strlen(absolPathSSD));
-	dest=absolPathHDD;
-	dest=dest+"/"+relativePath;
-	string mkdir="mkdir -p ";
-	mkdir=mkdir+dest;
-	system(mkdir.c_str());
-	string cp="cp -r ";
-	cp=cp+path+" "+dest;
-	system(cp.c_str());
+	string relativePath=path;
+	relativePath.erase(0,strlen(absolPathSSD));
+	string dest=absolPathHDD;
+	dest+=path;
+	printf("%s\n",dest.c_str());
 	return 0;	
 }//to do...
 
