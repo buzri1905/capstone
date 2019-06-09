@@ -205,6 +205,8 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	string pathString=absolPathSSD;
 	pathString+="/";
 	pathString+=path;
+	size_t dotslashindex=pathString.find("./");
+	pathString.relace(index,2,"");
 	//printf("Pushback dir\n");
 	s2hlist->push_back(make_pair(calWeight(pathString,curTime,timeRefer),pathString));
 	delete toUpdateFile;
