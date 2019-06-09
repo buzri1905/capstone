@@ -106,8 +106,10 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		updateDir(home,&statbuf,&size,0);
 		rate=size/(double)limitSize*100;
 		if(rate>=0){//force
+			prevErr=0;
 			while(1){
 				errcode=0;
+				printf("print call\n");
 				selected=printList(argc,argv,s2hlist,prevErr);
 				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
