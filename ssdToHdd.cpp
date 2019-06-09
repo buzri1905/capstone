@@ -111,8 +111,10 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 				errcode=0;
 				printf("print call\n");
 				selected=printList(argc,argv,s2hlist,prevErr);
-				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
+				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++){
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
+					printf("%s\n",s2hlist->at(*iter).second.c_str());
+				}
 				prevErr=errcode;
 				if(!errcode)
 					break;
