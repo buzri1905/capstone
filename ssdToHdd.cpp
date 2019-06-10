@@ -148,12 +148,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	dir=opendir(path.c_str());
 	if(dir==NULL)
 		return FAILEDTOOPEN;
-	if(access(TIMELOGNAME,F_OK)!=-1){
-		getInfo(path,&stat_bf,&s2hData);
-	}
-	else{
-		s2hDataInit(&s2hData);
-	}
+	getInfo(path,&stat_bf,&s2hData);
 	toUpdateFile=new vector<time_t>;
 	toUpdateSubdir=new vector<time_t>;
 	while((dirEntry=readdir(dir))!=NULL){
@@ -181,6 +176,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		}
 	}
 	if(toUpdateFile->empty()==false){
+		printf("file data saving\n");
 		sort(toUpdateFile->begin(),toUpdateFile->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateFile->begin();iter!=toUpdateFile->end();iter++){
 			s2hData.accessTime[s2hData.end]=*iter;
@@ -191,6 +187,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	}
 
 	if(toUpdateSubdir->empty()==false){
+		printf("subdir data saving\n");
 		sort(toUpdateSubdir->begin(),toUpdateSubdir->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateSubdir->begin();iter!=toUpdateSubdir->end();iter++){
 			s2hData.accessTimeSubdir[s2hData.endSubdir]=*iter;
@@ -200,6 +197,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		}
 	}
 	*size=s2hData.sizeOfDir=totalSize;
+	printf("save at %s with begin %d end %d\n",path.c_str(),s2hData.begin,s2hData.end);
 	saveInfo(path,&s2hData);
 
 	string pathString=absolPathSSD;
@@ -227,7 +225,6 @@ int saveInfo(const char* path,struct s2hData*s2hData){
 	pathString+=TIMELOGNAME;
 
 	fp=fopen(pathString.c_str(),"wb");
-	printf("Try to write at %s with begin : %d end : %d\n",pathString.c_str(),s2hData->begin,s2hData->end);
 	if(fp==0){
 		printf("Failed to write at %s\n",pathString.c_str());
 		return 0;
@@ -242,22 +239,18 @@ int getInfo(string path,struct stat*stat_bf,struct s2hData*s2hData){
 int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 	FILE*fp;
 	string pathString=path;
-	if(stat(pathString.c_str(),stat_bf))
-		printf("Something wrong in getInfo path is %s\n",path);
+	stat(pathString.c_str(),stat_bf);
 
 	pathString+="/";
 	pathString+=TIMELOGNAME;
 
 	fp=fopen(pathString.c_str(),"rb");
-	printf("Try to access %s",pathString.c_str());
 	if(fp==0){//no permission
-		printf(" But failed to open\n");
 		s2hDataInit(s2hData);
 		return 0;
 	}
 	fread(s2hData,sizeof(struct s2hData),1,fp);
 	fclose(fp);
-	printf(" and success to open begin : %d end : %d\n",s2hData->begin,s2hData->end);
 	return 0;//change path
 }
 
