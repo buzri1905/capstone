@@ -16,11 +16,10 @@ static void destroy_window(GtkWidget *widget, gpointer data);
 
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
 	init_list();
-
 	result->clear();
 
 	if(list->size()>LIST_NUM) {
-		//result->push_back(-1);
+		printf("hey too many list\n");
 		return result;
 	}
 
