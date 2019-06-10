@@ -15,7 +15,7 @@
 
 using namespace std;
 
-GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, long int num);
+GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t label_size, long int num);
 
 //call gui
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode);

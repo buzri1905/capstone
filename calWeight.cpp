@@ -24,7 +24,7 @@ double calWeight(string path, time_t reference, vector<time_t> const &diff) {
 	size_score = get_size_score(s2hdata.sizeOfDir);//0~16
 	//100MB 1GB 5GB
 	//1.1 1.2 1.3
-	total_score = file_score + subdir_score;//weight???
+	total_score = (file_score + subdir_score) * size_score;//weight???
 	
 	return total_score;
 }
@@ -78,6 +78,12 @@ static double get_subdir_score(const int begin, const int end, const time_t acce
 }
 
 static double get_size_score(const off_t size) {
-	printf("size : %ld\n", size);
-	return 0;
+	if(size < 102400)
+		return 1.0;
+	else if(size >= 102400 && size < 1048576)
+		return 1.1;
+	else if(size >= 1048576 && size < 5242880)
+		return 1.2;
+	else
+		return 1.3;
 }
