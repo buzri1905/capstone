@@ -227,6 +227,11 @@ int saveInfo(const char* path,struct s2hData*s2hData){
 	pathString+=TIMELOGNAME;
 
 	fp=fopen(pathString.c_str(),"wb");
+	printf("Try to write at %s with begin : %d end : %d\n",pathString.c_str(),s2hData->begin,s2hData->end);
+	if(fp==0){
+		printf("Failed to write at %s\n",pathString.c_str);
+		return 0;
+	}
 	fwrite(s2hData,sizeof(struct s2hData),1,fp);
 	fclose(fp);
 	return 0;//done
@@ -244,12 +249,15 @@ int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 	pathString+=TIMELOGNAME;
 
 	fp=fopen(pathString.c_str(),"rb");
+	printf("Try to access %s",pathString.c_str());
 	if(fp==0){//no permission
+		printf(" But failed to open\n");
 		s2hDataInit(s2hData);
 		return 0;
 	}
 	fread(s2hData,sizeof(struct s2hData),1,fp);
 	fclose(fp);
+	printf(" and success to open begin : %d end : %d\n",s2hData->begin,s2hData->end);
 	return 0;//change path
 }
 
