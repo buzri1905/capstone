@@ -151,12 +151,18 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	getInfo(path,&stat_bf,&s2hData);
 	toUpdateFile=new vector<time_t>;
 	toUpdateSubdir=new vector<time_t>;
+	string dirpath=absolPathSSD;
+	dirpath+="/";
+	string tmpPath=path;
+	tmpPath.erase(0,2);
+	pathString+=tmpPath+"/";
 	while((dirEntry=readdir(dir))!=NULL){
 		if(strcmp(dirEntry->d_name,".")==0)
 			continue;
 		if(strcmp(dirEntry->d_name,"..")==0)
 			continue;
-		if(stat(dirEntry->d_name,&stat_bf)){
+		string d_nameString=pathString+dirEntry->d_name;
+		if(stat(d_nameString.c_str(),&stat_bf)){
 			printf("stat conti\n");
 			continue;
 		}
