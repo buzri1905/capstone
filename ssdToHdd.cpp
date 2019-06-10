@@ -244,6 +244,10 @@ int getInfo(const char *path,struct stat*stat_bf,struct s2hData*s2hData){
 	pathString+=TIMELOGNAME;
 
 	fp=fopen(pathString.c_str(),"rb");
+	if(fp==0){//no permission
+		s2hDataInit(s2hData);
+		return 0;
+	}
 	fread(s2hData,sizeof(struct s2hData),1,fp);
 	fclose(fp);
 	return 0;//change path
