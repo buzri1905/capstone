@@ -1,5 +1,5 @@
 #include "check.h"
-
+#include "ssdToHdd.h"
 static vector<int> *result = new vector<int>;
 
 static int check_list[LIST_NUM] = {0, };
@@ -53,16 +53,21 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 			gtk_container_add(GTK_CONTAINER(window), vbox);
 
 			string pathlist[10];
+			off_t size[10];
 			int l = 0;
 			for(vector<pair<double,string>>::const_iterator iter=list->begin(); iter!=list->end(); iter++) {
 				pathlist[l] = (*iter).second;
+				struct stat stat;
+				struct s2hData s2hdata;
+				getInfo(pathlist[l], &stat, &s2hdata);
+				size[l] = s2hdata.sizeOfDir;
 				l += 1;
 			}
 
 			GtkWidget *hbox[l];
 
 			for(int i=0; i<l; i++) {
-				hbox[i] = list_label_frame(vbox, pathlist[i].c_str(), i);
+				hbox[i] = list_label_frame(vbox, pathlist[i].c_str(), size[i], i);
 				gtk_widget_show(hbox[i]);
 			}
 
@@ -103,10 +108,11 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	return result;
 }
 
-GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, long int num) {
+GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t label_size, long int num) {
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *label;
+	GtkWidget *size_label;
 	GdkColor color;
 	color.red = 0x0000;
 	color.green = 0x0000;
@@ -127,10 +133,15 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, long int 
 	//gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
+	size_label = gtk_label_new(to_string((long long)label_size).c_str());
+	gtk_widget_set_size_request(label, WIDGET_WIDTH, WIDGET_HEIGHT);
+	gtk_container_add(GTK_CONTAINER(hbox), size_label);
+
 	gtk_widget_modify_bg(label, GTK_STATE_NORMAL, &color);
 
 	gtk_widget_show(button);
 	gtk_widget_show(label);
+	gtk_widget_show(size_label);
 	
 	return hbox;
 }
