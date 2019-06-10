@@ -8,9 +8,9 @@
 
 #define RECOMMEND 0
 #define WINDOW_HEIGHT 500
-#define WINDOW_WIDTH 700
+#define WINDOW_WIDTH 800
 #define WIDGET_HEIGHT 40
-#define WIDGET_WIDTH 20
+#define WIDGET_WIDTH 30
 #define LIST_NUM 10
 
 using namespace std;

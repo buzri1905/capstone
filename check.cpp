@@ -18,11 +18,6 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	init_list();
 	result->clear();
 
-	if(list->size()>LIST_NUM) {
-		printf("hey too many list\n");
-		return result;
-	}
-
 	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *label_information;
@@ -61,6 +56,8 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 				getInfo(pathlist[l], &stat, &s2hdata);
 				size[l] = s2hdata.sizeOfDir;
 				l += 1;
+				if(l >= LIST_NUM)
+					break;
 			}
 
 			GtkWidget *hbox[l];
@@ -128,12 +125,12 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t lab
 	//gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	
 	label = gtk_label_new(label_text);
-	gtk_widget_set_size_request(label, WINDOW_WIDTH-WIDGET_WIDTH, WIDGET_HEIGHT);
+	gtk_widget_set_size_request(label, WINDOW_WIDTH-WIDGET_WIDTH*4, WIDGET_HEIGHT);
 	//gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
 	size_label = gtk_label_new(to_string((long long)label_size).c_str());
-	gtk_widget_set_size_request(label, WIDGET_WIDTH, WIDGET_HEIGHT);
+	gtk_widget_set_size_request(label, WIDGET_WIDTH*3, WIDGET_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(hbox), size_label);
 
 	gtk_widget_modify_bg(label, GTK_STATE_NORMAL, &color);

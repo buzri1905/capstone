@@ -78,11 +78,11 @@ static double get_subdir_score(const int begin, const int end, const time_t acce
 }
 
 static double get_size_score(const off_t size) {
-	if(size < 102400)
+	if(size < 104857600)
 		return 1.0;
-	else if(size >= 102400 && size < 1048576)
+	else if(size >= 104857600 && size < 1073741824)
 		return 1.1;
-	else if(size >= 1048576 && size < 5242880)
+	else if(size >= 1073741824 && size < 5368709120)
 		return 1.2;
 	else
 		return 1.3;
