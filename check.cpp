@@ -12,6 +12,8 @@ static void cancel_event(GtkWidget *widget, gpointer data);
 
 static void init_list();
 
+static void destroy_window(GtkWidget *widget, gpointer data);
+
 vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> const* list, int errorCode) {
 	init_list();
 
@@ -33,8 +35,8 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "SSD to HDD");
 
-	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(gtk_exit), NULL);
-	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(gtk_exit), NULL);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(destroy_window), NULL);
+	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_window), NULL);
 
 	gtk_container_border_width(GTK_CONTAINER (window), 10);
 
@@ -68,8 +70,8 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 			button_cancel = gtk_button_new_with_label("cancel");
 			button_ok = gtk_button_new_with_label("ok");
 
-			g_signal_connect(button_ok, "clicked", G_CALLBACK(ok_button_press_event), NULL);
-			g_signal_connect(GTK_OBJECT(button_cancel), "clicked", G_CALLBACK(cancel_event), NULL);
+			g_signal_connect(button_ok, "clicked", G_CALLBACK(ok_button_press_event), window);
+			g_signal_connect(GTK_OBJECT(button_cancel), "clicked", G_CALLBACK(cancel_event), window);
 
 			gtk_container_add(GTK_CONTAINER(hbox_button), button_cancel);
 			gtk_container_add(GTK_CONTAINER(hbox_button), button_ok);
@@ -92,7 +94,6 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 		}
 	}
 
-	gtk_widget_hide(window);
 	for(vector<int>::iterator iter=result->begin(); iter!=result->end(); iter++) {
 		printf("checked : %d\n", (*iter));
 	}
@@ -142,7 +143,7 @@ static void ok_button_press_event(GtkWidget *widget, gpointer data) {
 		if(check_list[i]==1)
 			result->push_back(i);
 	}
-
+	gtk_widget_hide((GtkWidget *)data);
 	gtk_main_quit();
 }
 
@@ -160,7 +161,8 @@ static void checkbutton_callback(GtkWidget *widget, long int num) {
 static void cancel_event(GtkWidget *widget, gpointer data) {
 	(void)widget;
 	(void)data;
-	//result->push_back(-1);
+
+	gtk_widget_hide((GtkWidget *) data);
 	gtk_main_quit();
 }
 
@@ -169,4 +171,8 @@ static void init_list() {
 	for(int i=0; i<LIST_NUM; i++) {
 		check_list[i] = 0;
 	}
+}
+
+static void destroy_window(GtkWidget *widget, gpointer data) {
+	gtk_widget_hide(widget);
 }
