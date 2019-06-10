@@ -229,7 +229,7 @@ int saveInfo(const char* path,struct s2hData*s2hData){
 	fp=fopen(pathString.c_str(),"wb");
 	printf("Try to write at %s with begin : %d end : %d\n",pathString.c_str(),s2hData->begin,s2hData->end);
 	if(fp==0){
-		printf("Failed to write at %s\n",pathString.c_str);
+		printf("Failed to write at %s\n",pathString.c_str());
 		return 0;
 	}
 	fwrite(s2hData,sizeof(struct s2hData),1,fp);
