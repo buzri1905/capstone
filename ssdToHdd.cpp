@@ -156,10 +156,12 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			continue;
 		if(strcmp(dirEntry->d_name,"..")==0)
 			continue;
-		if(stat(dirEntry->d_name,&stat_bf))
+		if(stat(dirEntry->d_name,&stat_bf)){
+			printf("stat conti\n");
 			continue;
+		}
 		if(S_ISDIR(stat_bf.st_mode)){
-			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTimeSubdir))
+			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTimeSubdir)>0)//update lastAccessTimeSubdir
 				toUpdateSubdir->push_back(stat_bf.st_atime);
 			string pathString=path+"/"+dirEntry->d_name;
 
@@ -170,7 +172,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		else{
 			if(strcmp(dirEntry->d_name,TIMELOGNAME)==0)
 				continue;
-			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTime))
+			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTime)>0)
 				toUpdateFile->push_back(stat_bf.st_atime);
 			totalSize+=stat_bf.st_size;
 		}
