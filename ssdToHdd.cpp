@@ -161,8 +161,10 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	tmpPath.erase(0,2);
 	dirPath+=tmpPath+"/";
 	while((dirEntry=readdir(dir))!=NULL){
-		if(strcmp(dirEntry->d_name,".")==0)
+		if(dirEntry->d_name[0]=='.')
 			continue;
+//		if(strcmp(dirEntry->d_name,".")==0)
+//			continue;
 		if(strcmp(dirEntry->d_name,"..")==0)
 			continue;
 		string d_nameString=dirPath+dirEntry->d_name;
