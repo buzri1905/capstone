@@ -84,21 +84,24 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 	string home=".";
 	s2hlist=new vector<pair<double,string>>;
 	vector<int>*selected;
-	if(stat(absolPathSSD,&statbuf))
-		exit(1);
-	if((statbuf.st_mode&S_IFDIR)==0)
-		exit(2);
+	stat(absolPathSSD,&statbuf);
+	//if(stat(absolPathSSD,&statbuf))
+	//	exit(1);
+	if(!S_ISDIR(statbuf.st_mode))
+		exit(-1);
 	chdir(absolPathSSD);
 	while(1){
 		size=0;
-		if(stat(absolPathHDD,&statbuf))
-			exit(1);
+		/*if(stat(absolPathHDD,&statbuf))
+			exit(1);*/
+		stat(absolPathHDD,&statbuf);
 		if(!S_ISDIR(statbuf.st_mode))
-			exit(2);
-		if(stat(absolPathSSD,&statbuf))
-			exit(1);
+			exit(-1);
+		//if(stat(absolPathSSD,&statbuf))
+		//	exit(1);
+		stat(absolPathSSD,&statbuf);
 		if(!S_ISDIR(statbuf.st_mode))
-			exit(2);
+			exit(-1);
 		s2hlist->clear();
 		getStatic("./");
 		time(&curTime);
