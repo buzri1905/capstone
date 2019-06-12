@@ -216,5 +216,6 @@ static void init_list() {
 }
 
 static void destroy_window(GtkWidget *widget, gpointer data) {
+	(void) data;
 	gtk_widget_hide(widget);
 }
