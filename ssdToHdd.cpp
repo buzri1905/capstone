@@ -53,9 +53,9 @@ int main(int argc,char *argv[]){
 	double limitSizeGB;
 	off_t limitSize;
 	//pid_t pid;
-	if(chdir(argv[1])){
+	/*if(chdir(argv[1])){
 		return 1;
-	}
+	}*/
 	realpath(argv[1],absolPathSSD);
 	realpath(argv[2],absolPathHDD);
 	sscanf(argv[3],"%lf",&limitSizeGB);
