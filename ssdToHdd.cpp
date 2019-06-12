@@ -362,13 +362,13 @@ void getStatic(const char *path){
 
 	for(int i=0;i<4;i++){
 		time_t convert;
-		convert=first10aver+(i-3)*first10Vari/8;
+		convert=first10aver+(i-2)*first10Vari/8;
 		timeRefer.push_back(convert);
-		convert=last10aver+(i-3)*last10Vari/8;
+		convert=last10aver+(i-2)*last10Vari/8;
 		timeRefer.push_back(convert);
-		convert=last33aver+(i-3)*last33Vari/8;
+		convert=last33aver+(i-2)*last33Vari/8;
 		timeRefer.push_back(convert);
-		convert=last50aver+(i-3)*last50Vari/8;
+		convert=last50aver+(i-2)*last50Vari/8;
 		timeRefer.push_back(convert);
 	}
 	return;
