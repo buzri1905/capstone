@@ -163,8 +163,8 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	while((dirEntry=readdir(dir))!=NULL){
 		if(dirEntry->d_name[0]=='.')
 			continue;
-//		if(strcmp(dirEntry->d_name,".")==0)
-//			continue;
+		//if(strcmp(dirEntry->d_name,".")==0)
+		//	continue;
 		if(strcmp(dirEntry->d_name,"..")==0)
 			continue;
 		string d_nameString=dirPath+dirEntry->d_name;
@@ -375,8 +375,10 @@ void getStatic(const char *path){
 }
 
 int getStaticTime(const char *path,const struct stat *sb,int typeflag){
-	(void)path;
 	(void)typeflag;
+	for(int i=1;path[i];i++)
+		if(path[i]=='.'&&path[i-1]=='/')
+			return 0;
 	timeStatic.push_back(difftime(curTime,sb->st_atime));
 	return 0;
 }
