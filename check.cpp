@@ -49,12 +49,14 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 			string pathlist[10];
 			off_t size[10];
 			int l = 0;
+			double weight[10];
 			for(vector<pair<double,string>>::const_iterator iter=list->begin(); iter!=list->end(); iter++) {
 				pathlist[l] = (*iter).second;
 				struct stat stat;
 				struct s2hData s2hdata;
 				getInfo(pathlist[l], &stat, &s2hdata);
 				size[l] = s2hdata.sizeOfDir;
+				weight[l] = (*iter).first;
 				l += 1;
 				if(l >= LIST_NUM)
 					break;
@@ -63,7 +65,7 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 			GtkWidget *hbox[l];
 
 			for(int i=0; i<l; i++) {
-				hbox[i] = list_label_frame(vbox, pathlist[i].c_str(), size[i], i);
+				hbox[i] = list_label_frame(vbox, pathlist[i].c_str(), weight[i], size[i], i);
 				gtk_widget_show(hbox[i]);
 			}
 
@@ -104,10 +106,11 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	return result;
 }
 
-GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t label_size, long int num) {
+GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, double weight, off_t label_size, long int num) {
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *label;
+	GtkWidget *last_time_label;
 	GtkWidget *size_label;
 	GdkColor color;
 	color.red = 0x0000;
@@ -115,7 +118,7 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t lab
 	color.blue = 0x0000;
 	
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_set_size_request(hbox, WINDOW_WIDTH, WIDGET_HEIGHT);
+	//gtk_widget_set_size_request(hbox, WINDOW_WIDTH, WIDGET_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(parent), hbox);
 
 	button = gtk_check_button_new();
@@ -125,11 +128,39 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t lab
 	//gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	
 	label = gtk_label_new(label_text);
-	gtk_widget_set_size_request(label, WINDOW_WIDTH-WIDGET_WIDTH*4, WIDGET_HEIGHT);
+	gtk_widget_set_size_request(label, WINDOW_WIDTH, WIDGET_HEIGHT);
 	//gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
-	size_label = gtk_label_new(to_string((long long)label_size).c_str());
+	char score[10];
+	sprintf(score, "%lf", weight);
+
+	last_time_label = gtk_label_new(score);
+	gtk_widget_set_size_request(last_time_label, WIDGET_WIDTH, WIDGET_HEIGHT);
+	gtk_container_add(GTK_CONTAINER(hbox), last_time_label);
+
+	string unit;
+	off_t value;
+	if(label_size < 1024) {
+		unit = "Bytes";
+		value = label_size;
+	}
+	else if(label_size >= 1024 && label_size < 1024 * 1024) {
+		unit = "KB";
+		value = label_size / 1024;
+	}
+	else if(label_size >= 1024 * 1024 && label_size < (off_t)1024 * 1024 * 1024) {
+		unit = "MB";
+		value = label_size / (1024 * 1024);
+	}
+	else if(label_size >= (off_t)1024 * 1024 * 1024 && label_size < (off_t)1024 * 1024 * 1024 * 1024) {
+		unit = "GB";
+		value = label_size / (1024 * 1024 * 1024);
+	}
+
+	string result = to_string((long long)value) + unit;
+
+	size_label = gtk_label_new(result.c_str());
 	gtk_widget_set_size_request(label, WIDGET_WIDTH*3, WIDGET_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(hbox), size_label);
 
@@ -138,7 +169,7 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, off_t lab
 	gtk_widget_show(button);
 	gtk_widget_show(label);
 	gtk_widget_show(size_label);
-	
+	gtk_widget_show(last_time_label);	
 	return hbox;
 }
 
