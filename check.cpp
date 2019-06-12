@@ -118,7 +118,7 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, double we
 	color.blue = 0x0000;
 	
 	hbox = gtk_hbox_new(FALSE, 0);
-	//gtk_widget_set_size_request(hbox, WINDOW_WIDTH, WIDGET_HEIGHT);
+	gtk_widget_set_size_request(hbox, WINDOW_WIDTH, WIDGET_HEIGHT);
 	gtk_container_add(GTK_CONTAINER(parent), hbox);
 
 	button = gtk_check_button_new();
@@ -128,9 +128,13 @@ GtkWidget *list_label_frame(GtkWidget *parent, const char *label_text, double we
 	//gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	
 	label = gtk_label_new(label_text);
-	gtk_widget_set_size_request(label, WINDOW_WIDTH, WIDGET_HEIGHT);
+	gtk_widget_set_size_request(label, WINDOW_WIDTH*2, WIDGET_HEIGHT);
 	//gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
+	
+	//gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_MIDDLE);
+	gtk_label_set_max_width_chars(GTK_LABEL(label), 40);
 
 	char score[10];
 	sprintf(score, "%lf", weight);
