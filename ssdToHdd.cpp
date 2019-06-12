@@ -54,7 +54,6 @@ int main(int argc,char *argv[]){
 	off_t limitSize;
 	//pid_t pid;
 	if(chdir(argv[1])){
-		printf("?\n");
 		return 1;
 	}
 	realpath(argv[1],absolPathSSD);
@@ -113,7 +112,6 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 			prevErr=0;
 			while(1){
 				errcode=0;
-				printf("print call\n");
 				selected=printList(argc,argv,s2hlist,prevErr);
 				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
@@ -167,7 +165,6 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			continue;
 		string d_nameString=dirPath+dirEntry->d_name;
 		if(stat(d_nameString.c_str(),&stat_bf)){
-			printf("stat conti\n");
 			continue;
 		}
 		if(S_ISDIR(stat_bf.st_mode)){
@@ -188,7 +185,6 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		}
 	}
 	if(toUpdateFile->empty()==false){
-		printf("file data saving\n");
 		sort(toUpdateFile->begin(),toUpdateFile->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateFile->begin();iter!=toUpdateFile->end();iter++){
 			s2hData.accessTime[s2hData.end]=*iter;
@@ -199,7 +195,6 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 	}
 
 	if(toUpdateSubdir->empty()==false){
-		printf("subdir data saving\n");
 		sort(toUpdateSubdir->begin(),toUpdateSubdir->end());//if size>=NUMBEROFSAVE
 		for(vector<time_t>::iterator iter=toUpdateSubdir->begin();iter!=toUpdateSubdir->end();iter++){
 			s2hData.accessTimeSubdir[s2hData.endSubdir]=*iter;
@@ -209,7 +204,6 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		}
 	}
 	*size=s2hData.sizeOfDir=totalSize;
-	printf("save at %s with begin %d end %d\n",path.c_str(),s2hData.begin,s2hData.end);
 	saveInfo(path,&s2hData);
 
 	string pathString=absolPathSSD;
@@ -238,7 +232,6 @@ int saveInfo(const char* path,struct s2hData*s2hData){
 
 	fp=fopen(pathString.c_str(),"wb");
 	if(fp==0){
-		printf("Failed to write at %s\n",pathString.c_str());
 		return 0;
 	}
 	fwrite(s2hData,sizeof(struct s2hData),1,fp);
