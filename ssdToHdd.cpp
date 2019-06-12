@@ -83,6 +83,8 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 	string home=".";
 	s2hlist=new vector<pair<double,string>>;
 	vector<int>*selected;
+	printf("SSD dir is %s\n",absolPathSSD);
+	printf("HDD dir is %s\n",absolPathHDD);
 	stat(absolPathSSD,&statbuf);
 	//if(stat(absolPathSSD,&statbuf))
 	//	exit(1);
