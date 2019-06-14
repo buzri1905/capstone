@@ -39,11 +39,10 @@ char pathToTest[1024];
 
 
 void updateS2H(const char * path);
-int updateDir(string path,const struct stat *sb,off_t *size,int depth);
+int updateDir(string path,const struct stat *sb,off_t *size,int depth,time_t *subDirTime);
 void startDaemon(int argc,char*argv[],off_t limitSize);
 int move2hdd(const char *path);
 void s2hDataInit(struct s2hData *s2hData);
-int compareTimet(time_t time1,time_t time2);
 int saveInfo(string path,struct s2hData*s2hData);
 int saveInfo(const char* path,struct s2hData*s2hData);
 void getStatic(const char *path);
@@ -107,13 +106,18 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		getStatic("./");
 		time(&curTime);
 		chdir(absolPathSSD);
-		updateDir(home,&statbuf,&size,0);
+		time_t tmp;
+		updateDir(home,&statbuf,&size,0,&tmp);//tmp does not need
 		rate=size/(double)limitSize*100;
 		sort(s2hlist->begin(),s2hlist->end(),greater<>());
 		if(rate>=0){//force
 			prevErr=0;
 			while(1){
 				errcode=0;
+				printf("Time reference : ");
+				for(vector<time_t>::iterator::iter=timeRefer.begin();iter!=timeRefer.end();iter++)
+					printf("%ld ",*iter);
+				puts("");
 				selected=printList(argc,argv,s2hlist,prevErr);
 				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
@@ -140,14 +144,16 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 		sleep(SLEEPTIME);
 	}//done
 }
-int updateDir(string path,const struct stat *sb,off_t *size,int depth){
+int updateDir(string path,const struct stat *sb,off_t *size,int depth,time_t *subDirTime){
 	off_t totalSize=0,sizeOfSubDir;
 	DIR *dir;
 	struct dirent *dirEntry;
 	struct s2hData s2hData;
 	struct stat stat_bf;
+	time_t subDirTimePart;
 	(void)sb;
 	*size=0;
+	*subDirTime=0;
 	vector<time_t> *toUpdateFile,*toUpdateSubdir;
 	dir=opendir(path.c_str());
 	if(dir==NULL)
@@ -172,19 +178,22 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 			continue;
 		}
 		if(S_ISDIR(stat_bf.st_mode)){
-			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTimeSubdir)>0)//update lastAccessTimeSubdir
-				toUpdateSubdir->push_back(stat_bf.st_atime);
 			string pathString=path+"/"+dirEntry->d_name;
-
-			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1);
-
+			updateDir(pathString.c_str(),&stat_bf,&sizeOfSubDir,depth+1,&subDirTimePart);
+			if(subDirTimePart > s2hData.lastAccessTimeSubdir){//update lastAccessTimeSubdir
+				toUpdateSubdir->push_back(subDirTimePart);
+				if(*subDirTime < subDirTimePart)
+					*subDirTime=subDirTimePart;
+			}
 			totalSize+=sizeOfSubDir;
 		}
 		else{
 			if(strcmp(dirEntry->d_name,TIMELOGNAME)==0)
 				continue;
-			if(compareTimet(stat_bf.st_atime,s2hData.lastAccessTime)>0)
+			if(stat_bf.st_atime>s2hData.lastAccessTime)
 				toUpdateFile->push_back(stat_bf.st_atime);
+			if(*subDirTime < stat_bf.st_atime)
+				*subDirTime=stat_bf.st_atime;
 			totalSize+=stat_bf.st_size;
 		}
 	}
@@ -193,6 +202,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		for(vector<time_t>::iterator iter=toUpdateFile->begin();iter!=toUpdateFile->end();iter++){
 			s2hData.accessTime[s2hData.end]=*iter;
 			s2hData.end=(s2hData.end+1)%NUMBEROFSAVE;
+			s2hData.lastAccessTime=*iter;
 			if(s2hData.end==s2hData.begin)
 				s2hData.begin=(s2hData.begin+1)%NUMBEROFSAVE;
 		}
@@ -203,6 +213,7 @@ int updateDir(string path,const struct stat *sb,off_t *size,int depth){
 		for(vector<time_t>::iterator iter=toUpdateSubdir->begin();iter!=toUpdateSubdir->end();iter++){
 			s2hData.accessTimeSubdir[s2hData.endSubdir]=*iter;
 			s2hData.endSubdir=(s2hData.endSubdir+1)%NUMBEROFSAVE;
+			s2hData.lastAccessTimeSubdir=*iter;
 			if(s2hData.endSubdir==s2hData.beginSubdir)
 				s2hData.beginSubdir=(s2hData.beginSubdir+1)%NUMBEROFSAVE;
 		}
@@ -283,13 +294,6 @@ void s2hDataInit(struct s2hData *s2hData){
 	for(int i=0;i<NUMBEROFSAVE;i++)
 		s2hData->accessTime[i]=s2hData->accessTimeSubdir[i]=0;
 }//done
-int compareTimet(time_t time1,time_t time2){
-	if(time1>time2)
-		return 1;
-	if(time1<time2)
-		return -1;
-	return 0;
-}//have to varify
 
 void getStatic(const char *path){
 	int numOfFile;
