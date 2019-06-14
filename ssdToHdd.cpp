@@ -51,15 +51,12 @@ int main(int argc,char *argv[]){
 	(void)argc;
 	double limitSizeGB;
 	off_t limitSize;
-	//pid_t pid;
-	/*if(chdir(argv[1])){
-		return 1;
-	}*/
 	realpath(argv[1],absolPathSSD);
 	realpath(argv[2],absolPathHDD);
 	sscanf(argv[3],"%lf",&limitSizeGB);
 	limitSize=limitSizeGB*1024*1024*1024;
-/*
+	/*
+	pid_t pid;
 	pid=fork();
 	if(pid)
 		exit(0);
@@ -69,7 +66,7 @@ int main(int argc,char *argv[]){
 	close(2);
 	chdir("/");
 	setsid();
-*/
+	*/
 	startDaemon(argc,argv,limitSize);
 	return 0;//done
 }
