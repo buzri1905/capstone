@@ -17,7 +17,6 @@ double calWeight(string path, time_t reference, vector<time_t> const &diff) {
     struct s2hData s2hdata;
 	double file_score, subdir_score, size_score, total_score;
     getInfo(path, &stat, &s2hdata);
-	printf("%s\n", path.c_str());
 
 	file_score = get_file_score(s2hdata.begin, s2hdata.end, s2hdata.accessTime, reference, diff);//0~num_of_diff
 	subdir_score = get_subdir_score(s2hdata.beginSubdir, s2hdata.endSubdir, s2hdata.accessTimeSubdir, reference, diff);//0~num_of_diff
