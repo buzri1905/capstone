@@ -368,6 +368,7 @@ void getStatic(const char *path){
 	last33Vari/=numOf33Percent;
 	last50Vari/=numOf50Percent;
 
+	printf("varis %lf %lf %lf %lf\n",first10Vari,last10Vari,last33Vari,last50Vari);
 	for(int i=0;i<4;i++){
 		time_t convert;
 		convert=first10aver+(i-2)*first10Vari/8;
