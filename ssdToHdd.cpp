@@ -270,6 +270,9 @@ int move2hdd(const char *path){
 	relativePath.erase(0,strlen(absolPathSSD));
 	string dest=absolPathHDD;
 	dest+=relativePath;
+	string mkdir = "mkdir -p `dirname ";
+	mkdir+=dest+"`";
+	system(mkdir.c_str());
 	string commandMV="mv -f ";
 	commandMV+=path;
 	commandMV+=" "+dest;
