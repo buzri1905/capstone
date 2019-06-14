@@ -310,6 +310,10 @@ void getStatic(const char *path){
 	time(&curTime);
 	ftw(path,getStaticTime,100);
 	sort(timeStatic.begin(),timeStatic.end());
+	printf("Time static : ");
+	for(vector<double>::iterator iter=timeStatic.begin();iter!=timeStatic.end();iter++)
+		printf("%lf ",*iter);
+	puts("");
 	numOfFile=timeStatic.size();
 	numOf10Percent=numOfFile/10+1;
 	numOf33Percent=numOfFile/3+1;
