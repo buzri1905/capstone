@@ -98,10 +98,8 @@ vector<int> * printList(int argc, char* argv[], vector<pair<double,string>> cons
 	}
 
 	for(vector<int>::iterator iter=result->begin(); iter!=result->end(); iter++) {
-		printf("checked : %d\n", (*iter));
+		//printf("checked : %d\n", (*iter));
 	}
-
-	printf("end gui\n");
 
 	return result;
 }
@@ -191,13 +189,13 @@ static void ok_button_press_event(GtkWidget *widget, gpointer data) {
 
 static void checkbutton_callback(GtkWidget *widget, long int num) {
 	if(GTK_TOGGLE_BUTTON(widget)->active) {
-		g_print("%ld : activated\n", num);
+		//g_print("%ld : activated\n", num);
 		check_list[num] = 1;
 	} else {
-		g_print("%ld : not activated\n", num);
+		//g_print("%ld : not activated\n", num);
 		check_list[num] = 0;
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 static void cancel_event(GtkWidget *widget, gpointer data) {
