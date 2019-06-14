@@ -82,8 +82,6 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 	string home=".";
 	s2hlist=new vector<pair<double,string>>;
 	vector<int>*selected;
-	printf("SSD dir is %s\n",absolPathSSD);
-	printf("HDD dir is %s\n",absolPathHDD);
 	stat(absolPathSSD,&statbuf);
 	//if(stat(absolPathSSD,&statbuf))
 	//	exit(1);
@@ -114,10 +112,6 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 			prevErr=0;
 			while(1){
 				errcode=0;
-				printf("Time reference : ");
-				for(vector<time_t>::iterator iter=timeRefer.begin();iter!=timeRefer.end();iter++)
-					printf("%ld ",*iter);
-				puts("");
 				selected=printList(argc,argv,s2hlist,prevErr);
 				for(vector<int>::iterator iter=selected->begin();iter!=selected->end();iter++)
 					errcode|=move2hdd(s2hlist->at(*iter).second.c_str());
@@ -310,10 +304,6 @@ void getStatic(const char *path){
 	time(&curTime);
 	ftw(path,getStaticTime,100);
 	sort(timeStatic.begin(),timeStatic.end());
-	printf("Time static : ");
-	for(vector<double>::iterator iter=timeStatic.begin();iter!=timeStatic.end();iter++)
-		printf("%lf ",*iter);
-	puts("");
 	numOfFile=timeStatic.size();
 	numOf10Percent=numOfFile/10+1;
 	numOf33Percent=numOfFile/3+1;
@@ -368,7 +358,6 @@ void getStatic(const char *path){
 	last33Vari/=numOf33Percent;
 	last50Vari/=numOf50Percent;
 
-	printf("varis %lf %lf %lf %lf\n",first10Vari,last10Vari,last33Vari,last50Vari);
 	for(int i=0;i<4;i++){
 		time_t convert;
 		convert=first10aver+(i-2)*first10Vari/8;
