@@ -77,16 +77,6 @@ static double get_subdir_score(const int begin, const int end, const time_t acce
 }
 
 static double get_size_score(const off_t size) {
-	
-	if(size < (off_t)1024 * 1024 * 100)
-		return 1.0;
-	else if(size >= (off_t)1024 * 1024 * 100  && size < (off_t)1024 * 1024 * 1024)
-		return 1.1;
-	else if(size >= (off_t)1024 * 1024 * 1024 && size < (off_t)1024 * 1024 * 1024 * 5)
-		return 1.2;
-	else
-		return 1.3;
-	
 	double giga = (double) 5.0 * 1024.0 * 1024.0 * 1024.0;
 	return (double)(0.3 / giga)*size + 1.0;
 }
