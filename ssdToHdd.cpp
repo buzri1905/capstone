@@ -115,7 +115,7 @@ void startDaemon(int argc,char*argv[],off_t limitSize){
 			while(1){
 				errcode=0;
 				printf("Time reference : ");
-				for(vector<time_t>::iterator::iter=timeRefer.begin();iter!=timeRefer.end();iter++)
+				for(vector<time_t>::iterator iter=timeRefer.begin();iter!=timeRefer.end();iter++)
 					printf("%ld ",*iter);
 				puts("");
 				selected=printList(argc,argv,s2hlist,prevErr);
